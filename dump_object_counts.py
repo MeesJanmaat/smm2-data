@@ -8,6 +8,8 @@ import multiprocessing as mp
 import time
 import pickle
 
+# to-do: objects containing other objects
+
 obj_counts = {}
 obj_likes = {}
 obj_boos = {}
@@ -26,7 +28,6 @@ def append_dicts(id, likes, boos, plays, attempts, clears):
 # Level objects analysis
 def analyze_level(level_data, likes, boos, plays, attempts, clears):
   encountered_objects = set()
-
   level = Level(KaitaiStream(BytesIO(zlib.decompress(level_data))))
   # Overworld
   for i in range(level.overworld.object_count):
@@ -67,8 +68,9 @@ def worker(data):
 if __name__ == '__main__':
   df = pd.read_parquet("mm2_level/data/train-00000-of-00196-7a2d43e1e8287c30.parquet", engine="fastparquet")
   n_proc = 16
-  chunk_size = 64
-  subframes = [df.iloc[i:i + chunk_size] for i in range(0, n_proc * chunk_size, chunk_size)]
+  chunk_size = 5120
+  offset = 16 * 5120
+  subframes = [df.iloc[i + offset:i + offset + chunk_size] for i in range(0, n_proc * chunk_size, chunk_size)]
 
   with mp.Pool(n_proc) as pool:
     start = time.time()
@@ -77,7 +79,7 @@ if __name__ == '__main__':
     pool.close()
     pool.join()
 
-  print(f"Analysis done in {round(end - start, 4)} seconds. Starting final summation...")
+  print(f"Analysis done on {n_proc * chunk_size} levels in {round(end - start, 4)} seconds. Starting final summation...")
 
   for result in res:
     for key in result[0]: obj_counts[key] = obj_counts.get(key, 0) + result[0][key]
@@ -87,10 +89,12 @@ if __name__ == '__main__':
     for key in result[4]: obj_attempts[key] = obj_attempts.get(key, 0) + result[4][key]
     for key in result[5]: obj_clears[key] = obj_clears.get(key, 0) + result[5][key]
 
+  print(obj_counts)
+
   print("Writing to files...")
-  pickle.dump(obj_counts, file=open("object_count_data/obj_counts_0_1024", "wb"))
-  pickle.dump(obj_likes, file=open("object_count_data/obj_likes_0_1024", "wb"))
-  pickle.dump(obj_boos, file=open("object_count_data/obj_boos_0_1024", "wb"))
-  pickle.dump(obj_plays, file=open("object_count_data/obj_plays_0_1024", "wb"))
-  pickle.dump(obj_attempts, file=open("object_count_data/obj_attempts_0_1024", "wb"))
-  pickle.dump(obj_clears, file=open("object_count_data/obj_clears_0_1024", "wb"))
+  pickle.dump(obj_counts, file=open(f"object_count_data/obj_counts_{offset}_{offset + n_proc * chunk_size}", "wb"))
+  pickle.dump(obj_likes, file=open(f"object_count_data/obj_likes_{offset}_{offset + n_proc * chunk_size}", "wb"))
+  pickle.dump(obj_boos, file=open(f"object_count_data/obj_boos_{offset}_{offset + n_proc * chunk_size}", "wb"))
+  pickle.dump(obj_plays, file=open(f"object_count_data/obj_plays_{offset}_{offset + n_proc * chunk_size}", "wb"))
+  pickle.dump(obj_attempts, file=open(f"object_count_data/obj_attempts_{offset}_{offset + n_proc * chunk_size}", "wb"))
+  pickle.dump(obj_clears, file=open(f"object_count_data/obj_clears_{offset}_{offset + n_proc * chunk_size}", "wb"))
