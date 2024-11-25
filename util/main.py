@@ -62,5 +62,11 @@ Objects = {
   Level.Obj.ObjId.porkupuffer: ObjectData("porkupuffer", Category.enemies),
   Level.Obj.ObjId.buzzy_beetle: ObjectData("buzzy_beetle", Category.enemies),
   Level.Obj.ObjId.pow: ObjectData("pow", Category.gizmos),
-  Level.Obj.ObjId.super_hammer: ObjectData("super_hammer", Category.items)
+  Level.Obj.ObjId.super_hammer: ObjectData("super_hammer", Category.items),
+  Level.Obj.ObjId.ant_trooper: ObjectData("ant_trooper", Category.enemies),
+  Level.Obj.ObjId.koopa_car: ObjectData("koopa_car", Category.enemies),
+  Level.Obj.ObjId.tree: ObjectData("tree", Category.gizmos),
+  Level.Obj.ObjId.stingby: ObjectData("stingby", Category.enemies),
+  Level.Obj.ObjId.boo: ObjectData("boo", Category.enemies),
+  Level.Obj.ObjId.charvaargh: ObjectData("charvaargh", Category.enemies),
 }

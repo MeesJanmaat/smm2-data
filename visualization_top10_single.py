@@ -5,6 +5,8 @@ import pandas as pd
 import PIL
 import util
 
+plt.rcParams["font.size"] = 20
+
 counts = pickle.load(open("object_count_data/obj_counts_0_81920", "rb"))
 
 df = pd.read_parquet("mm2_level/data/train-00000-of-00196-7a2d43e1e8287c30.parquet", engine="fastparquet")
@@ -30,14 +32,21 @@ total_plays = df["plays"][:81920].sum()
 
 ordered_keys = sorted(counts, key=counts.get, reverse=True)
 
-for key in ordered_keys[-10:]:
-  ax.bar(key.name, counts[key] / total_levels * 100, color=util.Objects[key].get_color(), edgecolor="black")
+width = 0.9
+
+for i in range(10):
+  key = ordered_keys[i]
+  ax.bar(i, counts[key] / total_levels * 100, width=width, color=util.Objects[key].get_color(), edgecolor="black")
+
+  ax.text(i, 3, f"#{i+1}", fontsize=12, ha="center")
 
 ax.spines["bottom"].set_visible(False)
 ax.spines["right"].set_visible(False)
 ax.spines["top"].set_visible(False)
+ax.spines["left"].set_visible(False)
 ax.grid(visible=True, axis="y", ls="--", lw=1, c="black")
-ax.set_ylabel(r"% of levels")
+#ax.set_ylabel(r"% of levels")
+ax.set_ylim(0, 100)
 plt.tight_layout()
 
 # Rendering sprites
