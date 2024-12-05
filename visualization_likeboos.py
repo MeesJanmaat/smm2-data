@@ -1,9 +1,10 @@
+### Unused in the final data visualization.
+
 import matplotlib.pyplot as plt
 from matplotlib.offsetbox import OffsetImage, AnnotationBbox
 import pickle
 import pandas as pd
 import PIL
-import util
 
 plt.rcParams["font.size"] = 20
 
@@ -62,9 +63,9 @@ labels = ax.get_xticklabels()
 for i in range(3):
     img = PIL.Image.open(f"sprites/obj_{ordered_keys[i].name}.png")
     img = img.resize((64, 64), PIL.Image.NEAREST)
-    ib = OffsetImage(img, zoom=0.4)
-    ib.image.axes = ax
-    ab = AnnotationBbox(ib,
+    oi = OffsetImage(img, zoom=0.4)
+    oi.image.axes = ax
+    ab = AnnotationBbox(oi,
                         labels[i].get_position(),
                         frameon=False,
                         box_alignment=(0.5, 1.2)
@@ -74,9 +75,9 @@ for i in range(3):
 for i in range(3):
     img = PIL.Image.open(f"sprites/obj_{ordered_keys[-(3 - i)].name}.png")
     img = img.resize((64, 64), PIL.Image.NEAREST)
-    ib = OffsetImage(img, zoom=0.4)
-    ib.image.axes = ax
-    ab = AnnotationBbox(ib,
+    oi = OffsetImage(img, zoom=0.4)
+    oi.image.axes = ax
+    ab = AnnotationBbox(oi,
                         labels[3 + i].get_position(),
                         frameon=False,
                         box_alignment=(0.5, 1.2)

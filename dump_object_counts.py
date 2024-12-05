@@ -1,5 +1,7 @@
+### Dumps the counts, likes, boos, plays, attempts and clears per object per level.
+### Files are dumped in the object_count_data folder.
+
 import pandas as pd
-import numpy as np
 from kaitaistruct import KaitaiStream
 from mm2_level.level import Level
 from io import BytesIO
@@ -7,8 +9,6 @@ import zlib
 import multiprocessing as mp
 import time
 import pickle
-
-# to-do: objects containing other objects
 
 obj_counts = {}
 obj_likes = {}
@@ -42,7 +42,7 @@ def analyze_level(level_data, likes, boos, plays, attempts, clears):
       append_dicts(obj.id, likes, boos, plays, attempts, clears)
       encountered_objects.add(obj.id)
   
-  # Miscellaneous objects that already have their own counter
+  # Miscellaneous objects that have their own counter
   if (level.overworld.ice_count > 0 or level.subworld.ice_count > 0):
     append_dicts(Level.Obj.ObjId.ice_block, likes, boos, plays, attempts, clears)
   if (level.overworld.track_count > 0 or level.subworld.track_count > 0):
@@ -59,7 +59,8 @@ def analyze_level(level_data, likes, boos, plays, attempts, clears):
     append_dicts(Level.Obj.ObjId.piranha_creeper, likes, boos, plays, attempts, clears)
   if (level.overworld.exclamation_mark_block_count > 0 or level.subworld.exclamation_mark_block_count > 0):
     append_dicts(Level.Obj.ObjId.exclamation_block, likes, boos, plays, attempts, clears)
-  
+
+  # to-do: objects containing other objects?
 
 def worker(data):
   data.apply(lambda d: analyze_level(d["level_data"], d["likes"], d["boos"], d["plays"], d["attempts"], d["clears"]), axis=1)
@@ -67,9 +68,9 @@ def worker(data):
 
 if __name__ == '__main__':
   df = pd.read_parquet("mm2_level/data/train-00000-of-00196-7a2d43e1e8287c30.parquet", engine="fastparquet")
-  n_proc = 16
-  chunk_size = 5120
-  offset = 16 * 5120
+  n_proc = 16 # Number of processes
+  chunk_size = 5120 # Number of dataframe rows per process
+  offset = 0 # Initial dataframe row offset
   subframes = [df.iloc[i + offset:i + offset + chunk_size] for i in range(0, n_proc * chunk_size, chunk_size)]
 
   with mp.Pool(n_proc) as pool:
@@ -88,8 +89,6 @@ if __name__ == '__main__':
     for key in result[3]: obj_plays[key] = obj_plays.get(key, 0) + result[3][key]
     for key in result[4]: obj_attempts[key] = obj_attempts.get(key, 0) + result[4][key]
     for key in result[5]: obj_clears[key] = obj_clears.get(key, 0) + result[5][key]
-
-  print(obj_counts)
 
   print("Writing to files...")
   pickle.dump(obj_counts, file=open(f"object_count_data/obj_counts_{offset}_{offset + n_proc * chunk_size}", "wb"))

@@ -1,9 +1,10 @@
+### Unused in the final data visualization.
+
 import matplotlib.pyplot as plt
 from matplotlib.offsetbox import OffsetImage, AnnotationBbox
 import pickle
 import pandas as pd
 import PIL
-import util
 import numpy as np
 
 plt.rcParams["font.size"] = 20
@@ -12,20 +13,6 @@ counts = pickle.load(open("object_count_data/obj_counts_0_81920", "rb"))
 plays = pickle.load(open("object_count_data/obj_plays_0_81920", "rb"))
 
 df = pd.read_parquet("mm2_level/data/train-00000-of-00196-7a2d43e1e8287c30.parquet", engine="fastparquet")
-
-# Plotting:
-# - Top 10 objects used in levels, compare with top 10 objects in played levels
-#  o Bar chart with 2 bars for 1st, 2nd, etc. position
-#  o Color coded according to item color, hammer icon for "make", controller icon for "play"
-# / Bottom 10 objects used in levels
-#  o Bar chart
-# - Objects like/boo ratio OR clear rate vs. average over all levels
-#  o Bar chart with line at 0, light blue for boo and light red for like, only compare most deviating ones
-# - Game styles played vs. made
-#  o Bar chart with 2 bars
-# - Possibly also interesting: how do the number of enemies, powerups, checkpoints, 1-ups, etc. correlate to the like/boo ratio or clear rate?
-#     (for enemies: possibly filter out levels that contain stars)
-#  o Scatterplot
 
 fig, ax = plt.subplots()
 fig.set_size_inches(4, 2)
@@ -62,9 +49,9 @@ for i in range(5):
   img = PIL.Image.open(f"sprites/{images[ordered_keys[i]]}.png")
   img = img.resize((int(64 * img.width / img.height), 64))
   img = img.crop((0, 0, 0, 0))
-  ib = OffsetImage(img, zoom=0.3)
-  ib.image.axes = ax
-  ab = AnnotationBbox(ib,
+  oi = OffsetImage(img, zoom=0.3)
+  oi.image.axes = ax
+  ab = AnnotationBbox(oi,
                       (sum(ordered_values[:i]) + ordered_values[i] / 2, 0.5),
                       frameon=False
                       )
