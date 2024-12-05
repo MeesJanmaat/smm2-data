@@ -3,7 +3,6 @@
 import matplotlib.pyplot as plt
 from matplotlib.offsetbox import OffsetImage, AnnotationBbox
 import pickle
-import pandas as pd
 import PIL
 import numpy as np
 
@@ -13,13 +12,11 @@ plt.rcParams["font.size"] = 20
 counts = pickle.load(open("object_count_data/obj_counts_0_81920", "rb"))
 plays = pickle.load(open("object_count_data/obj_plays_0_81920", "rb"))
 
-df = pd.read_parquet("mm2_level/data/train-00000-of-00196-7a2d43e1e8287c30.parquet", engine="fastparquet")
-
 fig, ax = plt.subplots()
 fig.set_size_inches(8, 4.8)
 
 total_levels = 81920
-total_plays = df["plays"][:81920].sum()
+total_plays = 31950883 # df["plays"][:81920].sum()
 
 ordered_counts = sorted(counts, key=counts.get, reverse=True)
 

@@ -3,7 +3,6 @@
 import matplotlib.pyplot as plt
 from matplotlib.offsetbox import OffsetImage, AnnotationBbox
 import pickle
-import pandas as pd
 import PIL
 
 plt.rcParams["font.size"] = 20
@@ -12,12 +11,10 @@ plt.rcParams["font.size"] = 20
 counts = pickle.load(open("object_count_data/obj_counts_0_81920", "rb"))
 plays = pickle.load(open("object_count_data/obj_plays_0_81920", "rb"))
 
-df = pd.read_parquet("mm2_level/data/train-00000-of-00196-7a2d43e1e8287c30.parquet", engine="fastparquet")
-
 fig, ax = plt.subplots()
 
 total_levels = 81920
-total_plays = df["plays"][:81920].sum()
+total_plays = 31950883 # df["plays"][:81920].sum()
 
 ordered_counts = sorted(counts, key=counts.get, reverse=True)
 
@@ -25,12 +22,12 @@ width = 0.4
 ymax = 40
 
 # Count total levels in each gamestyle
-gs_counts = {i: (df.loc[:total_levels]["gamestyle"] == i).sum() for i in range(5)}
+gs_counts = pickle.load(open("misc_data/gs_counts", "rb"))
 ordered_keys = sorted(gs_counts, key=gs_counts.get, reverse=True)
 ordered_counts = [gs_counts[key] / total_levels * 100 for key in ordered_keys]
 
 # Count total plays of each gamestyle
-gs_plays = {i: df.loc[:total_levels][(df.loc[:total_levels]["gamestyle"] == i)]["plays"].sum() for i in range(5)}
+gs_plays = pickle.load(open("misc_data/gs_plays", "rb"))
 ordered_plays = [gs_plays[key] / total_plays * 100 for key in ordered_keys]
 
 # Color defs
