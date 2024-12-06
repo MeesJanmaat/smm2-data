@@ -8,7 +8,6 @@ Dependencies:
  - `matplotlib 3.9.2`
  - `pandas 2.2.3`
  - `pillow 10.3.0`
- - `pickle 4.0`
  
 Additional dependencies to reproduce data:
  - `kaitaistruct` and `mm2_level` from the [dataset repository](https://huggingface.co/datasets/TheGreatRambler/mm2_level)

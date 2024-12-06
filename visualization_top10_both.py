@@ -6,7 +6,7 @@ import pickle
 import PIL
 import numpy as np
 
-plt.rcParams["font.size"] = 20
+plt.rcParams["font.size"] = 16
 
 # Load data
 counts = pickle.load(open("object_count_data/obj_counts_0_81920", "rb"))
@@ -27,7 +27,7 @@ ordered_keys = sorted(disparities, key=disparities.get, reverse=True)
 # Take top and bottom 5
 ordered_keys = [*ordered_keys[:5], *ordered_keys[-5:]]
 
-width = 0.45
+width = 0.42
 group_gap = 0.5
 ymax = 80
 
@@ -46,7 +46,7 @@ for i in range(10):
     oi = OffsetImage(img, zoom=0.2)
     oi.image.axes = ax
     ab = AnnotationBbox(oi,
-                        (pos - width / 2, counts[key] / total_levels * 100 - 3 * (ymax/100)),
+                        (pos - width / 2, counts[key] / total_levels * 100 - 4 * (ymax/100)),
                         frameon=False
                         )
     ax.add_artist(ab)
@@ -68,7 +68,7 @@ ax.spines["right"].set_visible(False)
 ax.spines["top"].set_visible(False)
 ax.grid(visible=True, axis="y", ls="--", lw=1, c="black")
 ax.set_ylabel(r"% of levels")
-ax.axvline(4.75, 0, ymax, ls="--", lw=1, c="black")
+ax.axvline(4.75, 0, ymax, ls="-", lw=2, c="black")
 ax.set_ylim(0, ymax)
 plt.tight_layout()
 
